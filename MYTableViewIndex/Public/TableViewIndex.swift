@@ -171,8 +171,6 @@ open class TableViewIndex : UIControl {
     }
     
     private func selectIndex(_ index: Int) {
-        guard index != currentIndex else { return }
-        
         currentIndex = index
         
         if let delegate = self.delegate
@@ -324,10 +322,6 @@ open class TableViewIndex : UIControl {
         let progress = max(0, min(location.y / indexView.bounds.height, 0.9999))
         let idx = Int(floor(progress * CGFloat(items.count)))
         
-        if idx == currentIndex {
-            return
-        }
-        
         selectIndex(idx)
     }
     
@@ -349,11 +343,11 @@ open class TableViewIndex : UIControl {
     // MARK: - Haptic Feedback support
     
     @available(iOS 10.0, *)
-    private var feedbackGenerator: UISelectionFeedbackGenerator {
+    private var feedbackGenerator: UIImpactFeedbackGenerator {
         if feedbackGeneratorInstance == nil {
-            feedbackGeneratorInstance = UISelectionFeedbackGenerator()
+            feedbackGeneratorInstance = UIImpactFeedbackGenerator(style: .light)
         }
-        return feedbackGeneratorInstance as! UISelectionFeedbackGenerator
+        return feedbackGeneratorInstance as! UIImpactFeedbackGenerator
     }
     private var feedbackGeneratorInstance: Any? = nil
     
@@ -365,7 +359,7 @@ open class TableViewIndex : UIControl {
     
     private func notifyFeedbackGenerator() {
         if #available(iOS 10.0, *) {
-            feedbackGenerator.selectionChanged()
+            feedbackGenerator.impactOccurred()
             feedbackGenerator.prepare()
         }
     }
@@ -441,7 +435,7 @@ extension TableViewIndex {
             return UILocalizedIndexedCollation.current().sectionIndexTitles.map{ title -> UIView in
                 return StringItem(text: title)
             }
-        }        
+        }
     }
     
     open override func prepareForInterfaceBuilder() {
